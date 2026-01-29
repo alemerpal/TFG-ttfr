@@ -1,8 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const User = require('./User'); // Import User model
-const TimeSlot = require('./TimeSlot'); // Import TimeSlot model
-const BookingLocal = require('./BookingLocal'); // Import BookingLocal model
 
 const BookingService = sequelize.define('BookingService', {
   id: {
@@ -12,12 +9,8 @@ const BookingService = sequelize.define('BookingService', {
     allowNull: false,
   },
   client_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK User
     allowNull: false,
-    references: {
-      model: User,
-      key: 'id',
-    },
   },
   status: {
     type: DataTypes.ENUM('PENDING', 'CONFIRMED', 'REJECTED', 'CANCELLED', 'COMPLETED'),
@@ -33,20 +26,12 @@ const BookingService = sequelize.define('BookingService', {
     },
   },
   time_slot_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK TimeSlot
     allowNull: false,
-    references: {
-      model: TimeSlot,
-      key: 'id',
-    },
   },
   booking_local_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK BookingLocal
     allowNull: true,
-    references: {
-      model: BookingLocal,
-      key: 'id',
-    },
   },
   notes: {
     type: DataTypes.TEXT,
@@ -56,13 +41,5 @@ const BookingService = sequelize.define('BookingService', {
   tableName: 'booking_services',
   timestamps: false,
 });
-
-User.hasMany(BookingService, { foreignKey: 'client_id', onDelete: 'CASCADE' });
-BookingService.belongsTo(User, { foreignKey: 'client_id' });
-
-TimeSlot.hasOne(BookingService, { foreignKey: 'time_slot_id', onDelete: 'CASCADE' });
-BookingService.belongsTo(TimeSlot, { foreignKey: 'time_slot_id' });
-
-BookingService.belongsTo(BookingLocal, { foreignKey: 'booking_local_id' });
 
 module.exports = BookingService;

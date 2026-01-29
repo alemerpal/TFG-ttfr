@@ -1,4 +1,6 @@
-const { Service, WorkerProfile, Local } = require('../models');
+const Service = require('../models/Service');
+const WorkerProfile = require('../models/WorkerProfile');
+const Local = require('../models/Local');
 
 exports.createService = async (req, res) => {
   try {

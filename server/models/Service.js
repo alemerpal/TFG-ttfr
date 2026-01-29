@@ -1,8 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const WorkerProfile = require('./WorkerProfile'); // Import WorkerProfile model
-const Local = require('./Local'); // Import Local model
-const TimeSlot = require('./TimeSlot'); // Import TimeSlot model
 
 const Service = sequelize.define('Service', {
   id: {
@@ -12,20 +9,12 @@ const Service = sequelize.define('Service', {
     allowNull: false,
   },
   worker_id: {
-    type: DataTypes.UUID,
-    allowNull: true, // Optional
-    references: {
-      model: WorkerProfile,
-      key: 'id',
-    },
+    type: DataTypes.UUID, //FK WorkerProfile
+    allowNull: true,
   },
   local_id: {
-    type: DataTypes.UUID,
-    allowNull: true, // Optional
-    references: {
-      model: Local,
-      key: 'id',
-    },
+    type: DataTypes.UUID, //FK Local
+    allowNull: true,
   },
   title: {
     type: DataTypes.STRING,
@@ -61,20 +50,5 @@ const Service = sequelize.define('Service', {
     },
   },
 });
-
-WorkerProfile.hasMany(Service, { foreignKey: 'worker_id', onDelete: 'CASCADE' });
-Service.belongsTo(WorkerProfile, { foreignKey: 'worker_id' });
-
-Local.hasMany(Service, { foreignKey: 'local_id', onDelete: 'CASCADE' });
-Service.belongsTo(Local, { foreignKey: 'local_id' });
-
-Service.hasMany(TimeSlot, {
-  foreignKey: 'item_id',
-  constraints: false,
-  scope: {
-    item_id_type: 'Service',
-  },
-});
-TimeSlot.belongsTo(Service, { foreignKey: 'item_id', constraints: false });
 
 module.exports = Service;

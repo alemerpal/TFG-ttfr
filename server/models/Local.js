@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const WorkerProfile = require('./WorkerProfile'); // Import WorkerProfile model
-const TimeSlot = require('./TimeSlot'); // Import TimeSlot model
 
 const Local = sequelize.define('Local', {
   id: {
@@ -11,12 +9,8 @@ const Local = sequelize.define('Local', {
     allowNull: false,
   },
   worker_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK WorkerProfile
     allowNull: false,
-    references: {
-      model: WorkerProfile,
-      key: 'id',
-    },
   },
   title: {
     type: DataTypes.STRING,
@@ -42,32 +36,20 @@ const Local = sequelize.define('Local', {
     },
   },
   location_lat: {
-    type: DataTypes.DECIMAL(10, 8), // Latitude can have up to 8 decimal places
-    allowNull: true, // Can be null if address_text is sufficient
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
   },
   location_lng: {
-    type: DataTypes.DECIMAL(11, 8), // Longitude can have up to 8 decimal places
-    allowNull: true, // Can be null if address_text is sufficient
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
   },
   address_text: {
     type: DataTypes.STRING,
-    allowNull: true, // Can be null if lat/lng is sufficient
+    allowNull: true,
   },
 }, {
   tableName: 'locals',
-  timestamps: false, // Set to true for consistency
+  timestamps: false,
 });
-
-WorkerProfile.hasMany(Local, { foreignKey: 'worker_id', onDelete: 'CASCADE' });
-Local.belongsTo(WorkerProfile, { foreignKey: 'worker_id' });
-
-Local.hasMany(TimeSlot, {
-  foreignKey: 'item_id',
-  constraints: false,
-  scope: {
-    item_id_type: 'Local',
-  },
-});
-TimeSlot.belongsTo(Local, { foreignKey: 'item_id', constraints: false });
 
 module.exports = Local;

@@ -1,4 +1,5 @@
-const { Local, WorkerProfile } = require('../models');
+const Local = require('../models/Local');
+const WorkerProfile = require('../models/WorkerProfile');
 
 exports.createLocal = async (req, res) => {
   try {

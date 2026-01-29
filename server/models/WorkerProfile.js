@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const User = require('./User'); // Import User model
 
 const WorkerProfile = sequelize.define('WorkerProfile', {
   id: {
@@ -10,12 +9,8 @@ const WorkerProfile = sequelize.define('WorkerProfile', {
     allowNull: false,
   },
   user_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK User
     allowNull: false,
-    references: {
-      model: User,
-      key: 'id',
-    },
   },
   display_name: {
     type: DataTypes.STRING,
@@ -27,14 +22,11 @@ const WorkerProfile = sequelize.define('WorkerProfile', {
   },
   phone: {
     type: DataTypes.STRING,
-    allowNull: true, // Optional
+    allowNull: true,
   },
 }, {
   tableName: 'worker_profiles',
   timestamps: false,
 });
-
-User.hasOne(WorkerProfile, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-WorkerProfile.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = WorkerProfile;

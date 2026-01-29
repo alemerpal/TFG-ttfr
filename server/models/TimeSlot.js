@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Local = require('./Local'); // Import Local model
-const Service = require('./Service'); // Import Service model
 
 const TimeSlot = sequelize.define('TimeSlot', {
   id: {
@@ -10,8 +8,8 @@ const TimeSlot = sequelize.define('TimeSlot', {
     primaryKey: true,
     allowNull: false,
   },
-  item_id: {
-    type: DataTypes.UUID, //Polymorphic of Local or Service
+  item_id: { //Polymorphic FK
+    type: DataTypes.UUID, //FK Local or Service
     allowNull: false,
   },
   item_id_type: {
@@ -32,30 +30,12 @@ const TimeSlot = sequelize.define('TimeSlot', {
     allowNull: false,
   },
   recurring_rule: {
-    type: DataTypes.STRING, // e.g., using iCalendar RRULE format or similar
+    type: DataTypes.STRING,
     allowNull: true,
   },
 }, {
   tableName: 'time_slots',
-  timestamps: true,
+  timestamps: false,
 });
-
-Local.hasMany(TimeSlot, {
-  foreignKey: 'item_id',
-  constraints: false, // disable constraints for polymorphic
-  scope: {
-    item_id_type: 'Local',
-  },
-});
-Service.hasMany(TimeSlot, {
-  foreignKey: 'item_id',
-  constraints: false,
-  scope: {
-    item_id_type: 'Service',
-  },
-});
-
-TimeSlot.belongsTo(Local, { foreignKey: 'item_id', constraints: false });
-TimeSlot.belongsTo(Service, { foreignKey: 'item_id', constraints: false });
 
 module.exports = TimeSlot;

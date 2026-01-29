@@ -1,7 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const Conversation = require('./Conversation'); // Import Conversation model
-const User = require('./User'); // Import User model
 
 const Message = sequelize.define('Message', {
   id: {
@@ -11,20 +9,12 @@ const Message = sequelize.define('Message', {
     allowNull: false,
   },
   conversation_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK Conversation
     allowNull: false,
-    references: {
-      model: Conversation,
-      key: 'id',
-    },
   },
   sender_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK User
     allowNull: false,
-    references: {
-      model: User,
-      key: 'id',
-    },
   },
   content: {
     type: DataTypes.TEXT,
@@ -43,11 +33,5 @@ const Message = sequelize.define('Message', {
   tableName: 'messages',
   timestamps: false,
 });
-
-Conversation.hasMany(Message, { foreignKey: 'conversation_id', onDelete: 'CASCADE' });
-Message.belongsTo(Conversation, { foreignKey: 'conversation_id' });
-
-User.hasMany(Message, { foreignKey: 'sender_id', onDelete: 'CASCADE' });
-Message.belongsTo(User, { foreignKey: 'sender_id' });
 
 module.exports = Message;

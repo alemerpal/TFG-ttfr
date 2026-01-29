@@ -1,7 +1,7 @@
-const { User, WorkerProfile } = require('../models');
-// const bcrypt = require('bcryptjs'); // Placeholder for password hashing
+const User = require('../models/User');
+const WorkerProfile = require('../models/WorkerProfile')
+const bcrypt = require('bcryptjs');
 
-// Create a new WorkerProfile (and associated User)
 exports.createWorkerProfile = async (req, res) => {
   try {
     const { email, password, name, avatar_url, display_name, description, phone } = req.body;

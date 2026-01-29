@@ -1,8 +1,5 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
-const User = require('./User'); // Import User model
-const BookingLocal = require('./BookingLocal'); // Import BookingLocal model
-const BookingService = require('./BookingService'); // Import BookingService model
 
 const Review = sequelize.define('Review', {
   id: {
@@ -12,28 +9,20 @@ const Review = sequelize.define('Review', {
     allowNull: false,
   },
   booking_id: { // Polymorphic FK
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK Booking
     allowNull: false,
   },
-  booking_type: { // 'BookingLocal' or 'BookingService'
+  booking_type: {
     type: DataTypes.ENUM('BookingLocal', 'BookingService'),
     allowNull: false,
   },
   reviewer_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK Review
     allowNull: false,
-    references: {
-      model: User,
-      key: 'id',
-    },
   },
   worker_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.UUID, //FK WorkerProfile
     allowNull: true,
-    references: {
-      model: User,
-      key: 'id',
-    },
   },
   rating: {
     type: DataTypes.INTEGER,
@@ -51,29 +40,5 @@ const Review = sequelize.define('Review', {
   tableName: 'reviews',
   timestamps: false,
 });
-
-User.hasMany(Review, { foreignKey: 'reviewer_id', onDelete: 'CASCADE', as: 'WrittenReviews' });
-Review.belongsTo(User, { foreignKey: 'reviewer_id', as: 'Reviewer' });
-
-User.hasMany(Review, { foreignKey: 'worker_id', onDelete: 'SET NULL', as: 'ReceivedReviews' }); // If worker is deleted, set worker_id to NULL
-Review.belongsTo(User, { foreignKey: 'worker_id', as: 'WorkerReviewed' });
-
-BookingLocal.hasMany(Review, {
-  foreignKey: 'booking_id',
-  constraints: false,
-  scope: {
-    booking_type: 'BookingLocal',
-  },
-});
-BookingService.hasMany(Review, {
-  foreignKey: 'booking_id',
-  constraints: false,
-  scope: {
-    booking_type: 'BookingService',
-  },
-});
-
-Review.belongsTo(BookingLocal, { foreignKey: 'booking_id', constraints: false });
-Review.belongsTo(BookingService, { foreignKey: 'booking_id', constraints: false });
 
 module.exports = Review;

@@ -2,18 +2,16 @@ const express = require('express');
 const dotenv = require('dotenv');
 const { connectDB, sequelize } = require('./config/database');
 
-// Import routes
 const localRoutes = require('./routes/localRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
-const userRoutes = require('./routes/userRoutes'); // New
-const workerProfileRoutes = require('./routes/workerProfileRoutes'); // New
+const userRoutes = require('./routes/userRoutes');
+const workerProfileRoutes = require('./routes/workerProfileRoutes');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Import models to ensure they are registered with Sequelize
 require('./models/User');
 require('./models/WorkerProfile');
 require('./models/Local');
@@ -25,7 +23,8 @@ require('./models/Review');
 require('./models/Conversation');
 require('./models/Message');
 
-// Test database connection and synchronize models
+require('./models/associations');
+
 async function initializeDatabase() {
   await connectDB();
   try {
