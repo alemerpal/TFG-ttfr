@@ -1,0 +1,48 @@
+import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
+import { connectDB, sequelize } from './config/database';
+
+import localRoutes from './routes/localRoutes';
+import serviceRoutes from './routes/serviceRoutes';
+import userRoutes from './routes/userRoutes';
+import workerProfileRoutes from './routes/workerProfileRoutes';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// All models will be imported in associations.ts to define relationships.
+import './models/associations';
+
+async function initializeDatabase() {
+  await connectDB();
+  try {
+    // await sequelize.sync({ force: true }); // Use { force: true } to drop and re-create tables (use with caution!)
+    await sequelize.sync({ alter: true });
+    console.log('All models were synchronized successfully.');
+  } catch (error) {
+    console.error('Unable to synchronize models:', error);
+    process.exit(1);
+  }
+}
+
+initializeDatabase();
+
+app.use(express.json()); // For parsing application/json
+
+app.get('/api/hello', (req: Request, res: Response) => {
+  res.json({ message: 'Hello from the backend!' });
+});
+
+app.use('/api/locals', localRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/worker-profiles', workerProfileRoutes);
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+});
+
+// Export app for testing
+export default app;
